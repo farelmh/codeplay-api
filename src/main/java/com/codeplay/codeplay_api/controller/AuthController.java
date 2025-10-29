@@ -2,6 +2,7 @@ package com.codeplay.codeplay_api.controller;
 
 import com.codeplay.codeplay_api.entity.User;
 import com.codeplay.codeplay_api.payload.RegisterRequest;
+import com.codeplay.codeplay_api.payload.LoginRequest;
 import com.codeplay.codeplay_api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,5 +39,20 @@ public class AuthController {
         userRepository.save(newUser);
 
         return new ResponseEntity<>("Registrasi berhasil, Silahkan Login", HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest) {
+        // Cari user berdasarkan email
+        return userRepository.findByEmail(loginRequest.getEmail())
+                .map(user -> {
+                    // Cek password
+                    if (user.getPassword().equals(loginRequest.getPassword())) {
+                        return new ResponseEntity<>("Login berhasil", HttpStatus.OK);
+                    } else {
+                        return new ResponseEntity<>("Password salah", HttpStatus.UNAUTHORIZED);
+                    }
+                })
+                .orElseGet(() -> new ResponseEntity<>("User tidak ditemukan", HttpStatus.NOT_FOUND));
     }
 }

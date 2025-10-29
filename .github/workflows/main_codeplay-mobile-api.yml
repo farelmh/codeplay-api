@@ -29,7 +29,7 @@ jobs:
       # ======================================================================
       - name: Build with Gradle
         # Perintah ini menggunakan Gradle Wrapper untuk membangun proyek
-        run: ./gradlew build 
+        run: ./gradlew build --stacktrace --info
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -66,3 +66,4 @@ jobs:
           slot-name: 'Production'
           package: '*.jar'
           
+

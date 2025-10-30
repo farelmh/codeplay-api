@@ -7,6 +7,7 @@ import com.codeplay.codeplay_api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,9 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     // endpoint: POST https://yourdomain.com/api/auth/register
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody RegisterRequest registerRequest) {
@@ -26,12 +30,14 @@ public class AuthController {
             return new ResponseEntity<>("Email sudah terdaftar", HttpStatus.BAD_REQUEST);
         }
 
+        String encPassword = passwordEncoder.encode(registerRequest.getPassword());
+
         // Buat user baru
         User newUser = new User();
         newUser.setIdUser(UUID.randomUUID().toString());
         newUser.setNama(registerRequest.getNama());
         newUser.setEmail(registerRequest.getEmail());
-        newUser.setPassword(registerRequest.getPassword()); // Di aplikasi nyata, jangan lupa untuk mengenkripsi password!
+        newUser.setPassword(encPassword);
         newUser.setNoHp(registerRequest.getNoHp());
         newUser.setRole("user");
         newUser.setCreatedAt(LocalDateTime.now());
@@ -46,8 +52,9 @@ public class AuthController {
         // Cari user berdasarkan email
         return userRepository.findByEmail(loginRequest.getEmail())
                 .map(user -> {
+                    boolean passwordMatches = passwordEncoder.matches(loginRequest.getPassword(), user.getPassword());
                     // Cek password
-                    if (user.getPassword().equals(loginRequest.getPassword())) {
+                    if (passwordMatches) {
                         return new ResponseEntity<>("Login berhasil", HttpStatus.OK);
                     } else {
                         return new ResponseEntity<>("Password salah", HttpStatus.UNAUTHORIZED);

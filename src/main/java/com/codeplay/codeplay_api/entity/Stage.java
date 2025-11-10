@@ -24,10 +24,10 @@ public class Stage {
     @JoinColumn(name = "id_lesson")
     private Lesson lesson;
 
-    @Column(name = "id_materi")
+    @Column(name = "id_materi", length = 50)
     private String idMateri;
 
-    @Column(name = "id_question")
+    @Column(name = "id_question", length = 50)
     private String idQuestion;
 
     public enum StageType {

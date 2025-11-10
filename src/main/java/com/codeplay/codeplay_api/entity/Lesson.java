@@ -10,7 +10,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 @Entity
-@Table(name = "lessons")
+@Table(name = "lesson")
 @Data
 public class Lesson {
 

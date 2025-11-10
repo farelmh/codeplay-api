@@ -24,6 +24,6 @@ public class Lesson {
     private String deskripsi;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_course", referencedColumnName = "id_course")
+    @JoinColumn(name = "id_courses", referencedColumnName = "id_courses")
     private Courses course;
 }

@@ -24,7 +24,7 @@ public class Courses {
 
     private String deskripsi;
 
-    @OneToMany(mappedBy = "courses", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Lesson> lessons;
 }

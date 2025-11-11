@@ -1,5 +1,6 @@
 package com.codeplay.codeplay_api.config;
 
+import jakarta.annotation.security.PermitAll;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,23 +12,31 @@ import org.springframework.security.web.SecurityFilterChain;
 public class WebSecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http)
+        throws Exception {
         http
             // 1. NONAKTIFKAN CSRF (Penting untuk REST API)
-            .csrf(csrf -> csrf.disable()) 
-            
+            .csrf(csrf -> csrf.disable())
             // 2. Tentukan aturan otorisasi untuk semua request
-            .authorizeHttpRequests(auth -> auth
-                // IZINKAN akses ke semua endpoint di bawah /api/auth/ tanpa otentikasi
-                .requestMatchers("/api/auth/**").permitAll() 
-                
-                // Semua request lainnya (selain /api/auth/) HARUS diotentikasi
-                .anyRequest().authenticated()
+            .authorizeHttpRequests(auth ->
+                auth
+                    // IZINKAN akses ke semua endpoint di bawah /api/auth/ tanpa otentikasi
+                    .requestMatchers("/api/auth/**")
+                    .permitAll()
+                    .requestMatchers("/api/courses")
+                    .permitAll()
+                    .requestMatchers("/api/courses/**")
+                    .permitAll()
+                    .requestMatchers("/api/lessons/**")
+                    .permitAll()
+                    // Semua request lainnya HARUS diotentikasi
+                    .anyRequest()
+                    .authenticated()
             );
 
         // Nonaktifkan form login default dan basic authentication jika Anda akan menggunakan JWT
-        http.httpBasic(basic -> basic.disable()); 
-        
+        http.httpBasic(basic -> basic.disable());
+
         return http.build();
     }
 }

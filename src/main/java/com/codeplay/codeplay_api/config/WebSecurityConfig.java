@@ -25,9 +25,9 @@ public class WebSecurityConfig {
                     .permitAll()
                     .requestMatchers("/api/courses")
                     .permitAll()
-                    .requestMatchers("/api/courses/**")
+                    .requestMatchers("/api/courses/{idCourse}/lessons")
                     .permitAll()
-                    .requestMatchers("/api/lessons/**")
+                    .requestMatchers("/api/lessons/{idLesson}/stages")
                     .permitAll()
                     // Semua request lainnya HARUS diotentikasi
                     .anyRequest()

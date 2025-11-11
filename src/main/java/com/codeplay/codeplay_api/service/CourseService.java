@@ -41,8 +41,20 @@ public class CourseService {
 
     // --- 2. Logika Pengambilan Lessons dalam Course ---
 
-    public List<Lesson> findLessonsByCourseId(String idCourse) {
-        return lessonRepository.findByCourse_IdCourse(idCourse);
+    public List<LessonListDto> findLessonsByCourseId(String idCourse) {
+        List<Lesson> lessons = lessonRepository.findByCourse_IdCourse(idCourse);
+
+        return lessons
+            .stream()
+            .map(l ->
+                new LessonListDto(
+                    l.getIdLesson(),
+                    l.getNamaLesson(),
+                    l.getDeskripsi(),
+                    l.getCourse().getIdCourse()
+                )
+            )
+            .toList();
     }
 
     // --- 3. Logika Pengambilan Detail Stage (Kompleksitas di sini) ---

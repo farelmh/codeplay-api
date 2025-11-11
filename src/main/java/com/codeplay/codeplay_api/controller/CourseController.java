@@ -1,7 +1,7 @@
 package com.codeplay.codeplay_api.controller;
 
 import com.codeplay.codeplay_api.dto.CourseListDto;
-import com.codeplay.codeplay_api.entity.Lesson;
+import com.codeplay.codeplay_api.dto.LessonListDto;
 import com.codeplay.codeplay_api.service.CourseService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +25,12 @@ public class CourseController {
 
     // GET /api/courses/{idCourse}/lessons: Daftar Lessons (Level) dalam Course
     @GetMapping("/{idCourse}/lessons")
-    public ResponseEntity<List<Lesson>> getLessonsByCourse(
+    public ResponseEntity<List<LessonListDto>> getLessonsByCourse(
         @PathVariable("idCourse") String idCourse
     ) {
-        List<Lesson> lessons = courseService.findLessonsByCourseId(idCourse);
+        List<LessonListDto> lessons = courseService.findLessonsByCourseId(
+            idCourse
+        );
         if (lessons.isEmpty()) {
             return ResponseEntity.notFound().build();
         }

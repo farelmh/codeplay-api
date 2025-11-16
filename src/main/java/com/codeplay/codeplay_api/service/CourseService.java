@@ -62,7 +62,7 @@ public class CourseService {
     public List<StageDetailDto> getStagesDetailByLessonId(String idLesson) {
         // Asumsi: Stages diambil sudah terurut. Jika tidak ada kolom order di DB,
         // harus diurutkan manual atau ditambahkan kolom order.
-        List<Stage> stages = stageRepository.findByLesson_IdLesson(idLesson);
+        List<Stage> stages = stageRepository.findByLesson_IdLessonOrderByNamaStageAsc(idLesson);
 
         if (stages.isEmpty()) {
             throw new EntityNotFoundException(

@@ -27,6 +27,4 @@ public class LessonController {
             return ResponseEntity.notFound().build();
         }
     }
-
-    // TODO: Tambahkan endpoint untuk submit jawaban, pengurangan energi, dan pencatatan progres di sini.
 }

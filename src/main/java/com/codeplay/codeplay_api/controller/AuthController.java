@@ -39,8 +39,12 @@ public class AuthController {
         newUser.setEmail(registerRequest.getEmail());
         newUser.setPassword(encPassword);
         newUser.setNoHp(registerRequest.getNoHp());
-        newUser.setRole("user");
+        newUser.setRole(User.Role.user);
         newUser.setCreatedAt(LocalDateTime.now());
+        newUser.setCurrentEnergy(100);
+        newUser.setMaxEnergy(100);
+        newUser.setLastEnergyUpdate(LocalDateTime.now());
+        newUser.setIsPremium(false);
 
         userRepository.save(newUser);
 

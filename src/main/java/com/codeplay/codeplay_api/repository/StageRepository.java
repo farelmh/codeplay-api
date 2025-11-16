@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StageRepository extends JpaRepository<Stage, String> {
-    List<Stage> findByLesson_IdLesson(String idLesson);
+    List<Stage> findByLesson_IdLessonOrderByNamaStageAsc(String idLesson);
 }

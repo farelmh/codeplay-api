@@ -1,5 +1,6 @@
 package com.codeplay.codeplay_api.controller;
 
+import com.codeplay.codeplay_api.dto.LoginResponseDto;
 import com.codeplay.codeplay_api.entity.User;
 import com.codeplay.codeplay_api.payload.RegisterRequest;
 import com.codeplay.codeplay_api.payload.LoginRequest;
@@ -52,18 +53,27 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest) {
-        // Cari user berdasarkan email
-        return userRepository.findByEmail(loginRequest.getEmail())
-                .map(user -> {
-                    boolean passwordMatches = passwordEncoder.matches(loginRequest.getPassword(), user.getPassword());
-                    // Cek password
-                    if (passwordMatches) {
-                        return new ResponseEntity<>("Login berhasil", HttpStatus.OK);
-                    } else {
-                        return new ResponseEntity<>("Password salah", HttpStatus.UNAUTHORIZED);
-                    }
-                })
-                .orElseGet(() -> new ResponseEntity<>("User tidak ditemukan", HttpStatus.NOT_FOUND));
+public ResponseEntity<LoginResponseDto> loginUser(@RequestBody LoginRequest loginRequest) {
+    
+    return userRepository.findByEmail(loginRequest.getEmail())
+        .map(user -> {
+            boolean passwordMatches = passwordEncoder.matches(loginRequest.getPassword(), user.getPassword());
+            
+            if (passwordMatches) {
+                LoginResponseDto successResponse = new LoginResponseDto(
+                    user.getIdUser(),
+                    "Login berhasil"
+                );
+                return new ResponseEntity<>(successResponse, HttpStatus.OK);
+                
+            } else {
+                LoginResponseDto errorResponse = new LoginResponseDto(null, "Password salah");
+                return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+            }
+        })
+        .orElseGet(() -> {
+            LoginResponseDto notFoundResponse = new LoginResponseDto(null, "User tidak ditemukan");
+            return new ResponseEntity<>(notFoundResponse, HttpStatus.NOT_FOUND);
+        });
     }
 }

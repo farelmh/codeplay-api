@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StageRepository extends JpaRepository<Stage, String> {
     List<Stage> findByLesson_IdLessonOrderByNamaStageAsc(String idLesson);
+    long countByLesson_IdLesson(String idLesson);
 }

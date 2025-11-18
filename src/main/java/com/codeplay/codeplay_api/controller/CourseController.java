@@ -23,13 +23,15 @@ public class CourseController {
         return ResponseEntity.ok(courses);
     }
 
-    // GET /api/courses/{idCourse}/lessons: Daftar Lessons (Level) dalam Course
+    // GET /api/courses/{idCourse}/lessons: 
+    // Daftar Lessons (Level) dalam Course dengan status locked/unlocked
     @GetMapping("/{idCourse}/lessons")
     public ResponseEntity<List<LessonListDto>> getLessonsByCourse(
-        @PathVariable("idCourse") String idCourse
+        @PathVariable("idCourse") String idCourse,
+        @RequestHeader("idUser") String idUser
     ) {
         List<LessonListDto> lessons = courseService.findLessonsByCourseId(
-            idCourse
+            idCourse, idUser
         );
         if (lessons.isEmpty()) {
             return ResponseEntity.notFound().build();

@@ -33,35 +33,53 @@ public class CourseService {
     @Autowired
     private QuestionOptionRepository questionOptionRepository;
 
-    // --- 1. Logika Pengambilan Courses dengan Hitungan Lesson ---
+    @Autowired
+    private UserStageProgressRepository userStageProgressRepository;
+
 
     public List<CourseListDto> findAllCoursesWithLessonCount() {
         return coursesRepository.findCourseListWithLessonCount();
     }
 
-    // --- 2. Logika Pengambilan Lessons dalam Course ---
+    public List<LessonListDto> findLessonsByCourseId(String idCourse, String idUser) {
+        List<Lesson> lessons = lessonRepository.findByCourse_IdCourseOrderByIdLessonAsc(idCourse);
 
-    public List<LessonListDto> findLessonsByCourseId(String idCourse) {
-        List<Lesson> lessons = lessonRepository.findByCourse_IdCourse(idCourse);
+        List<LessonListDto> results = new ArrayList<>();
+        
+        boolean previousLessonIsCompleted = true; 
 
-        return lessons
-            .stream()
-            .map(l ->
-                new LessonListDto(
-                    l.getIdLesson(),
-                    l.getNamaLesson(),
-                    l.getDeskripsi(),
-                    l.getCourse().getIdCourse()
-                )
-            )
-            .toList();
+        for (Lesson lesson : lessons) {
+            
+            boolean isUnlocked = previousLessonIsCompleted; 
+            
+            LessonListDto dto = new LessonListDto(
+                lesson.getIdLesson(),
+                lesson.getNamaLesson(),
+                lesson.getDeskripsi(),
+                lesson.getCourse().getIdCourse(),
+                isUnlocked
+            );
+            results.add(dto);
+
+            previousLessonIsCompleted = isLessonCompleted(idUser, lesson.getIdLesson());
+        }
+        
+        return results;
     }
 
-    // --- 3. Logika Pengambilan Detail Stage (Kompleksitas di sini) ---
+    public boolean isLessonCompleted(String idUser, String idLesson) {
+        long totalStages = stageRepository.countByLesson_IdLesson(idLesson);
+
+        if (totalStages == 0) {
+            return false;
+        }
+
+        long completedStages = userStageProgressRepository.countCompletedStagesForLesson(idUser, idLesson);
+
+        return totalStages == completedStages;
+    }
 
     public List<StageDetailDto> getStagesDetailByLessonId(String idLesson) {
-        // Asumsi: Stages diambil sudah terurut. Jika tidak ada kolom order di DB,
-        // harus diurutkan manual atau ditambahkan kolom order.
         List<Stage> stages = stageRepository.findByLesson_IdLessonOrderByNamaStageAsc(idLesson);
 
         if (stages.isEmpty()) {
@@ -78,7 +96,6 @@ public class CourseService {
             dto.setNamaStage(stage.getNamaStage());
             dto.setDeskripsi(stage.getDeskripsi());
             dto.setType(stage.getType());
-            // dto.setStageOrder(stage.getStageOrder()); // Jika ada
 
             if (stage.getType() == StageType.materi) {
                 Optional<Materi> materi = materiRepository.findById(
@@ -101,7 +118,6 @@ public class CourseService {
                     questionDto.setContent(q.getContent());
                     questionDto.setAnswersType(q.getAnswersType());
 
-                    // Ambil Opsi Jawaban (JOIN ke QuestionOption)
                     List<QuestionOption> options =
                         questionOptionRepository.findByQuestion_IdQuestion(
                             q.getIdQuestion()
@@ -109,7 +125,7 @@ public class CourseService {
                     questionDto.setOptions(
                         options
                             .stream()
-                            .map(this::mapToSafeOption) // Hapus kunci jawaban
+                            .map(this::mapToSafeOption)
                             .collect(Collectors.toList())
                     );
 
@@ -122,13 +138,11 @@ public class CourseService {
         return results;
     }
 
-    // Metode utilitas untuk menyembunyikan kunci jawaban dari client
     private QuestionOption mapToSafeOption(QuestionOption option) {
-        // Buat objek baru agar Entity aslinya tidak diubah
         QuestionOption safeOption = new QuestionOption();
         safeOption.setIdQuestionOption(option.getIdQuestionOption());
         safeOption.setOptionText(option.getOptionText());
-        safeOption.setIsCorrect(null); // Set ke null sebelum dikirim
+        safeOption.setIsCorrect(null);
         return safeOption;
     }
 }

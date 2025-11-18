@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LessonRepository extends JpaRepository<Lesson, String> {
-    List<Lesson> findByCourse_IdCourse(String idCourse);
+    List<Lesson> findByCourse_IdCourseOrderByIdLessonAsc(String idCourse);
 }

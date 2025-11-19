@@ -33,6 +33,8 @@ public class WebSecurityConfig {
                     .permitAll()
                     .requestMatchers("/api/lessons/*/stages/*/**")
                     .permitAll()
+                    .requestMatchers("/api/energy/**")
+                    .permitAll()
                     // Semua request lainnya HARUS diotentikasi
                     .anyRequest()
                     .authenticated()

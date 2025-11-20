@@ -35,6 +35,8 @@ public class WebSecurityConfig {
                     .permitAll()
                     .requestMatchers("/api/energy/**")
                     .permitAll()
+                    .requestMatchers("/api/check-time")
+                    .permitAll()
                     // Semua request lainnya HARUS diotentikasi
                     .anyRequest()
                     .authenticated()

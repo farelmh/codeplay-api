@@ -20,7 +20,7 @@ public class EnergyService {
         // 1. Jika energi sudah full, update timestamp ke sekarang agar timer tidak "basi"
         // dan return user langsung.
         if (user.getCurrentEnergy() >= user.getMaxEnergy()) {
-            user.setLastEnergyUpdate(LocalDateTime.now());
+            user.setLastEnergyUpdate(LocalDateTime.now(JAKARTA_ZONE));
             return userRepository.save(user);
         }
 

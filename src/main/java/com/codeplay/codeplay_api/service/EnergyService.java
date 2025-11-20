@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EnergyService {
 
+    private static final java.time.ZoneId JAKARTA_ZONE = java.time.ZoneId.of("Asia/Jakarta");
+
     private final UserRepository userRepository;
     private static final int ENERGY_REGEN_MINUTES = 5;
 
@@ -23,7 +25,7 @@ public class EnergyService {
         }
 
         LocalDateTime last = user.getLastEnergyUpdate();
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(JAKARTA_ZONE);
 
         long minutesPassed = java.time.Duration.between(last, now).toMinutes();
         long energyToRegen = minutesPassed / ENERGY_REGEN_MINUTES;

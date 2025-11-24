@@ -1,5 +1,6 @@
 package com.codeplay.codeplay_api.dto;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -11,4 +12,5 @@ public class EnergyResponseDto {
     private Integer currentEnergy;
     private Integer maxEnergy;
     private Boolean isPremium;
+    private LocalDateTime lastEnergyUpdate;
 }

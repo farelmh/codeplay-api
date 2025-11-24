@@ -73,7 +73,8 @@ public class EnergyService {
                 "PREMIUM_USER_NO_ENERGY_CONSUMPTION",
                 user.getCurrentEnergy(),
                 user.getMaxEnergy(),
-                true
+                true,
+                user.getLastEnergyUpdate()
             );
         }
 
@@ -83,7 +84,8 @@ public class EnergyService {
                 "ENERGY_NOT_ENOUGH",
                 user.getCurrentEnergy(),
                 user.getMaxEnergy(),
-                false
+                false,
+                user.getLastEnergyUpdate()
             );
         }
 
@@ -95,7 +97,8 @@ public class EnergyService {
             "ENERGY_CONSUMED",
             user.getCurrentEnergy(),
             user.getMaxEnergy(),
-            false
+            false,
+            user.getLastEnergyUpdate()
         );
     }
 }

@@ -42,7 +42,8 @@ public class EnergyController {
                 "ENERGY_REGENERATED",
                 updated.getCurrentEnergy(),
                 updated.getMaxEnergy(),
-                updated.getIsPremium()
+                updated.getIsPremium(),
+                updated.getLastEnergyUpdate()
             )
         );
     }

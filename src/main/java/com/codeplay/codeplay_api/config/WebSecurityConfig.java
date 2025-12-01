@@ -1,6 +1,5 @@
 package com.codeplay.codeplay_api.config;
 
-import jakarta.annotation.security.PermitAll;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,6 +35,14 @@ public class WebSecurityConfig {
                     .requestMatchers("/api/energy/**")
                     .permitAll()
                     .requestMatchers("/api/check-time")
+                    .permitAll()
+                    .requestMatchers("/api/premium/list")
+                    .permitAll()
+                    .requestMatchers("/api/auth/change-password")
+                    .permitAll()
+                    .requestMatchers("/api/auth/send-otp")
+                    .permitAll()
+                    .requestMatchers("/api/auth/verify-otp")
                     .permitAll()
                     // Semua request lainnya HARUS diotentikasi
                     .anyRequest()

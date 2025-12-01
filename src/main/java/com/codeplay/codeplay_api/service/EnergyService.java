@@ -11,14 +11,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EnergyService {
 
-    private static final java.time.ZoneId JAKARTA_ZONE = java.time.ZoneId.of("Asia/Jakarta");
+    private static final java.time.ZoneId JAKARTA_ZONE = java.time.ZoneId.of(
+        "Asia/Jakarta"
+    );
 
     private final UserRepository userRepository;
     private static final int ENERGY_REGEN_MINUTES = 5;
 
     public User regenerateEnergy(User user) {
-        // 1. Jika energi sudah full, update timestamp ke sekarang agar timer tidak "basi"
-        // dan return user langsung.
         if (user.getCurrentEnergy() >= user.getMaxEnergy()) {
             user.setLastEnergyUpdate(LocalDateTime.now(JAKARTA_ZONE));
             return userRepository.save(user);
@@ -34,7 +34,6 @@ public class EnergyService {
             int currentEnergy = user.getCurrentEnergy();
             int maxEnergy = user.getMaxEnergy();
 
-            // Hitung energi baru tapi jangan melebihi max
             int newEnergy = Math.min(
                 maxEnergy,
                 currentEnergy + (int) energyToRegen
@@ -42,15 +41,9 @@ public class EnergyService {
 
             user.setCurrentEnergy(newEnergy);
 
-            // --- PERBAIKAN LOGIKA WAKTU ---
             if (newEnergy >= maxEnergy) {
-                // Jika setelah ditambah jadi penuh, reset waktu ke 'now'
                 user.setLastEnergyUpdate(now);
             } else {
-                // PENTING: Jangan set ke 'now'.
-                // Tambahkan waktu 'last' dengan jumlah menit yang SUDAH dikonversi jadi energi.
-                // Contoh: Lewat 7 menit. Dapat 1 energi (5 menit).
-                // Waktu update maju 5 menit. Sisa 2 menit tetap berjalan untuk energi berikutnya.
                 long minutesUsed = energyToRegen * ENERGY_REGEN_MINUTES;
                 user.setLastEnergyUpdate(last.plusMinutes(minutesUsed));
             }

@@ -29,12 +29,10 @@ public class StageProgressService {
         var stage = stageRepository.findById(idStage)
                 .orElseThrow(() -> new RuntimeException("Stage tidak ditemukan"));
 
-        // Cek apakah progress sudah ada
         var existingProgress = userStageProgressRepository
                 .findByUser_IdUserAndStage_IdStage(idUser, idStage)
                 .orElse(null);
 
-        // Jika belum ada, buat baru
         if (existingProgress == null) {
             var newProgress = new UserStageProgress();
             newProgress.setIdProgress(UUID.randomUUID().toString());
@@ -51,7 +49,6 @@ public class StageProgressService {
             );
         }
 
-        // Jika sudah ada tapi belum selesai → update statusnya
         if (existingProgress.getStatus() != UserStageProgress.ProgressStatus.selesai) {
             existingProgress.setStatus(UserStageProgress.ProgressStatus.proses);
 
@@ -65,25 +62,24 @@ public class StageProgressService {
                     existingProgress.getIdProgress(),
                     existingProgress.getStatus().toString(),
                     "Progress stage sudah ada, status diperbarui ke PROSES"
-            );
+        );
         }
 
-        // Jika sudah selesai → tidak diubah
-        return new StageProgressResponseDto(
-                existingProgress.getIdProgress(),
-                existingProgress.getStatus().toString(),
-                "Stage sudah diselesaikan sebelumnya"
-        );
-    }
+                return new StageProgressResponseDto(
+                        existingProgress.getIdProgress(),
+                        existingProgress.getStatus().toString(),
+                        "Stage sudah diselesaikan sebelumnya"
+                );
+        }
 
-    public void completeStage(String idUser, String idStage) {
-        var progress = userStageProgressRepository
-                .findByUser_IdUserAndStage_IdStage(idUser, idStage)
-                .orElseThrow(() -> new RuntimeException("Progress not started"));
+        public void completeStage(String idUser, String idStage) {
+                var progress = userStageProgressRepository
+                        .findByUser_IdUserAndStage_IdStage(idUser, idStage)
+                        .orElseThrow(() -> new RuntimeException("Progress not started"));
 
-        progress.setCompletionDate(LocalDateTime.now());
-        progress.setStatus(UserStageProgress.ProgressStatus.selesai);
+                progress.setCompletionDate(LocalDateTime.now());
+                progress.setStatus(UserStageProgress.ProgressStatus.selesai);
 
-        userStageProgressRepository.save(progress);
-    }
+                userStageProgressRepository.save(progress);
+        }
 }
